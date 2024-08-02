@@ -1,0 +1,51 @@
+{
+	"id": "d4855dd0-4a6a-492c-83fe-b02a6bcc98ec",
+	"values": [
+		{
+			"key": "dev",
+			"value": "https://swapi.dev/api/",
+			"type": "default",
+			"enabled": false
+		},
+		{
+			"key": "local",
+			"value": "http://localhost:7000/",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": false
+		},
+		{
+			"key": "_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "emailAleatorio",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "nomeAleatorio",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "senhaAleatoria",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2024-08-02T20:35:36.774Z",
+	"_postman_exported_using": "Postman/11.6.2"
+}
