@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "0a106e80-31c3-49e2-97d6-96e808b34b4b",
+		"name": "Teste ServeRest Usuário",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28940536"
+	},
+	"item": [
+		{
+			"name": "Cenários positivos",
+			"item": [
+				{
+					"name": "Listar usuários",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code  200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A lista de usuários está presente\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"usuarios\");\r",
+									"    pm.expect(jsonData.usuarios).to.be.an(\"array\");\r",
+									"});\r",
+									"pm.environment.get(\"nome\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}usuarios/",
+							"host": [
+								"{{local}}usuarios"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar usuário",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Utilizando o Postman com random \r",
+									"const randomNumber = Math.floor(Math.random() * 1000);\r",
+									"const randomEmail = `testuser${randomNumber}@example.com`;\r",
+									"const randomFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+									"const randomLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");\r",
+									"const randomName = `${randomFirstName} ${randomLastName}`;\r",
+									"const randomPassword = Math.random().toString(36).slice(-8);\r",
+									"\r",
+									"// Salvar os valores na variável de ambiente criada\r",
+									"pm.environment.set('emailAleatorio', randomEmail);\r",
+									"pm.environment.set('nomeAleatorio', randomName);\r",
+									"pm.environment.set('senhaAleatoria', randomPassword);\r",
+									"pm.environment.set('_id', )\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Mensagem de sucesso está presente\", function () {\r",
+									"    var jsonData = pm.response.json()\r",
+									"    pm.expect(jsonData.message).to.eql(\"Cadastro realizado com sucesso\");\r",
+									"})\r",
+									"\r",
+									"// Verifique se a resposta foi bem-sucedida e salva o id na variável para usar na busca por id \r",
+									"if (pm.response.code === 201) {\r",
+									"    const responseJson = pm.response.json();\r",
+									"    const id = responseJson._id;\r",
+									"    pm.environment.set('_id', id);\r",
+									"    console.log(`ID salvo na variável de ambiente: ${id}`);\r",
+									"} else {\r",
+									"    console.error('Resposta da requisição não foi bem-sucedida.');\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"{{nomeAleatorio}}\",\r\n  \"email\": \"{{emailAleatorio}}\",\r\n  \"password\": \"{{senhaAleatoria}}\",\r\n  \"administrador\": \"true\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}usuarios",
+							"host": [
+								"{{local}}usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar usuário por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code  200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Verificar se o id na resposta é o mesmo que o id utilizado na URL (conmparando com a variável)\r",
+									"pm.test(\"Verifica se o _id da resposta é o mesmo utilizado na URL\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var requestedId = pm.environment.get(\"_id\");\r",
+									"    pm.expect(jsonData._id).to.eql(requestedId);\r",
+									"});\r",
+									"\r",
+									"// Verificar os outros campos de retorno\r",
+									"pm.test(\"Verifica campos adicionais\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"nome\");\r",
+									"    pm.expect(jsonData).to.have.property(\"email\");\r",
+									"    pm.expect(jsonData).to.have.property(\"password\");\r",
+									"    pm.expect(jsonData).to.have.property(\"administrador\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}usuarios/{{_id}}",
+							"host": [
+								"{{local}}usuarios"
+							],
+							"path": [
+								"{{_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar um usuário",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Utilizando o Postman para criar contas aleatórias\r",
+									"const randomNumber = Math.floor(Math.random() * 1000);\r",
+									"const randomEmail = `testuser${randomNumber}@example.com`;\r",
+									"const randomFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+									"const randomLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");\r",
+									"const randomName = `${randomFirstName} ${randomLastName}`;\r",
+									"const randomPassword = Math.random().toString(36).slice(-8);\r",
+									"\r",
+									"// Criar variáveis aleatórias e definir no ambiente\r",
+									"pm.environment.set('emailAleatorio', randomEmail);\r",
+									"pm.environment.set('nomeAleatorio', randomName);\r",
+									"pm.environment.set('senhaAleatoria', randomPassword);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code é 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Registro alterado com sucesso\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"{{nomeAleatorio}}\",\r\n  \"email\": \"{{emailAleatorio}}\",\r\n  \"password\": \"{{senhaAleatoria}}\",\r\n  \"administrador\": \"true\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}usuarios/{{_id}}",
+							"host": [
+								"{{local}}usuarios"
+							],
+							"path": [
+								"{{_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar um usuário",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Registro excluído com sucesso\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}usuarios/{{_id}}",
+							"host": [
+								"{{local}}usuarios"
+							],
+							"path": [
+								"{{_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Aqui está um fluxo de testes analisando as possibilidades da API, para que o fluxo funcione no cenário perfeito e retorne sucesso nos testes a sequência deve ser:\n\n1. Listar usuários\n    \n2. Criar usuário\n    \n3. Buscar usuário por ID\n    \n4. Editar um usuário\n    \n5. Deletar um usuário"
+		},
+		{
+			"name": "Cenários negativos",
+			"item": [
+				{
+					"name": "Criar usuário",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code é 400\", function () {\r",
+									"    pm.response.to.have.status(400)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Mensagem de sucesso está presente\", function () {\r",
+									"    var jsonData = pm.response.json()\r",
+									"    pm.expect(jsonData.message).to.eql(\"Este email já está sendo usado\");\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"Fulano da Silva\",\r\n  \"email\": \"fulano@qa.com\",\r\n  \"password\": \"teste\",\r\n  \"administrador\": \"true\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}usuarios",
+							"host": [
+								"{{local}}usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar usuário por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code é 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Usuário não encontrado\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}usuarios/0uxuPY0cbmQhpEz2",
+							"host": [
+								"{{local}}usuarios"
+							],
+							"path": [
+								"0uxuPY0cbmQhpEz2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Aqui está um fluxo de testes analisando as possibilidades da API, mas com o foco em retornos negativos deste. Para estes testes tenta-se criar um usuário com dados de um já existente e buscar por um usuário informando o ID incorreto."
+		}
+	]
+}
